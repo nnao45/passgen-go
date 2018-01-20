@@ -1,4 +1,4 @@
-# passgen
+# passgen-go
 Password generator written in Go.
 ## Usage
 ```bash
