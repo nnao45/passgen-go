@@ -242,7 +242,7 @@ func diceRoll(numroll func(int) int, num int) (str []rune) {
 		} else if dice <= 4 && !*noVaildSym {
 			n = symbolMap[numRoll(len(symbolMap))]
 		} else {
-			n = alphaMap[numRoll(len(alphaMap)/2*numRoll(2))]
+			n = alphaMap[numRoll(len(alphaMap))]
 		}
 		str = append(str, n)
 	}
