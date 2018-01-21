@@ -4,9 +4,10 @@ import (
 	cryptorand "crypto/rand"
 	"encoding/binary"
 	"fmt"
-	"gopkg.in/alecthomas/kingpin.v2"
 	mrand "math/rand"
 	"os"
+
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -109,106 +110,130 @@ const (
 	O
 )
 
-var symbolMap map[int]rune = map[int]rune{
-	hom: '~',
-	inc: '!',
-	att: '@',
-	sha: '#',
-	dol: '$',
-	par: '%',
-	hed: '^',
-	and: '&',
-	sta: '*',
-	le1: '(',
-	ri1: ')',
-	und: '_',
-	hyp: '-',
-	pls: '+',
-	equ: '=',
-	le2: '{',
-	ri2: '}',
-	le3: '[',
-	ri3: ']',
-	bas: '¥',
-	seq: ':',
-	sec: ';',
-	dqu: '"',
-	squ: '`',
-	lar: '>',
-	sma: '<',
-	col: ',',
-	cam: '.',
-	que: '?',
-	sla: '/',
-	//	pip: '|',
+type SymbolMap map[int]rune
+type AlphaMap map[int]rune
+type NumberMap map[int]rune
+
+type passMap struct {
+	SymbolMap SymbolMap
+	AlphaMap  AlphaMap
+	NumberMap NumberMap
 }
 
-var alphaMap map[int]rune = map[int]rune{
-	a: 'a',
-	b: 'b',
-	c: 'c',
-	d: 'd',
-	e: 'e',
-	f: 'f',
-	g: 'g',
-	h: 'h',
-	i: 'i',
-	j: 'j',
-	k: 'k',
-	//	l:	'l',
-	m: 'm',
-	n: 'n',
-	o: 'o',
-	p: 'p',
-	q: 'q',
-	r: 'r',
-	s: 's',
-	t: 't',
-	u: 'u',
-	v: 'v',
-	w: 'q',
-	x: 'x',
-	y: 'y',
-	z: 'z',
-	A: 'A',
-	B: 'B',
-	C: 'C',
-	D: 'D',
-	E: 'E',
-	F: 'F',
-	G: 'G',
-	H: 'H',
-	I: 'I',
-	J: 'J',
-	K: 'K',
-	L: 'L',
-	M: 'M',
-	N: 'N',
-	//	O:	'O',
-	P: 'P',
-	Q: 'Q',
-	R: 'R',
-	S: 'S',
-	T: 'T',
-	U: 'U',
-	V: 'V',
-	W: 'W',
-	X: 'X',
-	Y: 'Y',
-	Z: 'Z',
+func newSymbolMap() SymbolMap {
+	return SymbolMap{
+		hom: '~',
+		inc: '!',
+		att: '@',
+		sha: '#',
+		dol: '$',
+		par: '%',
+		hed: '^',
+		and: '&',
+		sta: '*',
+		le1: '(',
+		ri1: ')',
+		und: '_',
+		hyp: '-',
+		pls: '+',
+		equ: '=',
+		le2: '{',
+		ri2: '}',
+		le3: '[',
+		ri3: ']',
+		bas: '¥',
+		seq: ':',
+		sec: ';',
+		dqu: '"',
+		squ: '`',
+		lar: '>',
+		sma: '<',
+		col: ',',
+		cam: '.',
+		que: '?',
+		sla: '/',
+		//	pip: '|',
+	}
 }
 
-var numberMap map[int]rune = map[int]rune{
-	0: '0',
-	1: '1',
-	2: '2',
-	3: '3',
-	4: '4',
-	5: '5',
-	6: '6',
-	7: '7',
-	8: '8',
-	9: '9',
+func newAlphaMap() AlphaMap {
+	return AlphaMap{
+		a: 'a',
+		b: 'b',
+		c: 'c',
+		d: 'd',
+		e: 'e',
+		f: 'f',
+		g: 'g',
+		h: 'h',
+		i: 'i',
+		j: 'j',
+		k: 'k',
+		//	l:	'l',
+		m: 'm',
+		n: 'n',
+		o: 'o',
+		p: 'p',
+		q: 'q',
+		r: 'r',
+		s: 's',
+		t: 't',
+		u: 'u',
+		v: 'v',
+		w: 'q',
+		x: 'x',
+		y: 'y',
+		z: 'z',
+		A: 'A',
+		B: 'B',
+		C: 'C',
+		D: 'D',
+		E: 'E',
+		F: 'F',
+		G: 'G',
+		H: 'H',
+		I: 'I',
+		J: 'J',
+		K: 'K',
+		L: 'L',
+		M: 'M',
+		N: 'N',
+		//	O:	'O',
+		P: 'P',
+		Q: 'Q',
+		R: 'R',
+		S: 'S',
+		T: 'T',
+		U: 'U',
+		V: 'V',
+		W: 'W',
+		X: 'X',
+		Y: 'Y',
+		Z: 'Z',
+	}
+}
+
+func newNumberMap() NumberMap {
+	return NumberMap{
+		0: '0',
+		1: '1',
+		2: '2',
+		3: '3',
+		4: '4',
+		5: '5',
+		6: '6',
+		7: '7',
+		8: '8',
+		9: '9',
+	}
+}
+
+func newpassMap() *passMap {
+	return &passMap{
+		SymbolMap: newSymbolMap(),
+		AlphaMap:  newAlphaMap(),
+		NumberMap: newNumberMap(),
+	}
 }
 
 func seedInit() (seed int64) {
@@ -225,42 +250,42 @@ func numRoll(max int) (dice int) {
 	return
 }
 
-func diceRoll(numroll func(int) int, num int) (str []rune) {
+func (pm *passMap) diceRoll(numroll func(int) int, num int) (str []rune) {
 	for count := 0; count < *length; count++ {
 		dice := numroll(num)
 		var n rune
 		var nn int
 		if dice <= 2 && !*noVaildNum {
 			for {
-				nn = numRoll(len(numberMap))
+				nn = numRoll(len(pm.NumberMap))
 				if *noVaildUnr && nn == 0 {
 					continue
 				}
 				break
 			}
-			n = numberMap[nn]
+			n = pm.NumberMap[nn]
 		} else if dice <= 4 && !*noVaildSym {
-			n = symbolMap[numRoll(len(symbolMap))]
+			n = pm.SymbolMap[numRoll(len(pm.SymbolMap))]
 		} else {
-			n = alphaMap[numRoll(len(alphaMap))]
+			n = pm.AlphaMap[numRoll(len(pm.AlphaMap))]
 		}
 		str = append(str, n)
 	}
 	return
 }
 
-func init() {
+func main() {
 	app.HelpFlag.Short('h')
 	kingpin.MustParse(app.Parse(os.Args[1:]))
-	if !*noVaildUnr {
-		symbolMap[pip] = '|'
-		alphaMap[l] = 'l'
-		alphaMap[O] = 'O'
-	}
-}
 
-func main() {
+	pm := newpassMap()
+	if !*noVaildUnr {
+		pm.SymbolMap[pip] = '|'
+		pm.AlphaMap[l] = 'l'
+		pm.AlphaMap[O] = 'O'
+	}
+
 	for count := 0; count < *number; count++ {
-		fmt.Println(string(diceRoll(numRoll, 10)))
+		fmt.Println(string(pm.diceRoll(numRoll, 10)))
 	}
 }
