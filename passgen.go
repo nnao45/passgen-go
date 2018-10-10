@@ -144,8 +144,6 @@ func newSymbolMap() SymbolMap {
 		bas: '¥',
 		seq: ':',
 		sec: ';',
-		dqu: '"',
-		squ: '`',
 		lar: '>',
 		sma: '<',
 		col: ',',
